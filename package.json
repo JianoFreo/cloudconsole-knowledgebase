@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "start": "node index.js --prefix web",
+    "start": "npx serve web/dist -l $PORT -s",
     "build": "npm install --prefix web && npm run build --prefix web",
     "test": "echo \"Error: no test specified\" && exit 1"
   }
