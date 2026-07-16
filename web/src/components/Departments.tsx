@@ -20,7 +20,7 @@ type Department = {
     iconBg: string
 }
 
-const departments: Department[] = [
+const departments: Department[] = [ // built in departments for demonstration purposes
     {
         id: "marketing",
         name: "Marketing",
