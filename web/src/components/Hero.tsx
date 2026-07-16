@@ -15,7 +15,7 @@ function Hero() {
                     One home for every team
                 </p>
                 <h1 className="max-w-3xl text-4xl font-extrabold leading-tight text-white md:text-6xl">
-                    The CloudConsole Knowledgebase
+                    CloudConsole Knowledgebase
                 </h1>
                 <p className="mt-5 max-w-xl text-lg text-teal-100">
                     Guides, playbooks, and answers from Marketing, Finance, Logistics,
