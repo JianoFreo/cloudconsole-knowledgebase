@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { Cloud, Menu, X } from "lucide-react"
+import { useLocation, useNavigate } from "react-router"
 
 type NavBarProps = {
     page: string
@@ -7,16 +8,19 @@ type NavBarProps = {
 }
 
 const links = [
-    { id: "home", label: "Home" },
-    { id: "departments", label: "About" },
-    { id: "resources", label: "Resources" },
-    { id: "contact", label: "Contact" },
+    { id: "home", label: "Home", path: "/about#home" },
+    { id: "departments", label: "About", path: "/about#departments" },
+    { id: "browse", label: "Browse", path: "/browse" },
+    { id: "share", label: "Share", path: "/share" },
+    { id: "contact", label: "Contact", path: "/about#contact" },
 ]
 
-function NavBar({ page, setPage }: NavBarProps) {
+function NavBar({ page }: NavBarProps) {
 
     const [open, setOpen] = useState(false)
     const [scrolled, setScrolled] = useState(false)
+    const navigate = useNavigate()
+    const location = useLocation()
 
     useEffect(() => {
         const onScroll = () => setScrolled(window.scrollY > 8)
@@ -24,18 +28,27 @@ function NavBar({ page, setPage }: NavBarProps) {
         return () => window.removeEventListener("scroll", onScroll)
     }, [])
 
-    const goTo = (id: string) => {
-        setPage(id)
+    const goTo = (path: string) => {
         setOpen(false)
-        const el = document.getElementById(id)
-        if (el) el.scrollIntoView({ behavior: "smooth" })
+        if (path.includes("#")) {
+            const [route, hash] = path.split("#")
+            if (location.pathname !== route) {
+                navigate(path)
+                return
+            }
+            const el = document.getElementById(hash)
+            if (el) el.scrollIntoView({ behavior: "smooth" })
+            else navigate(path)
+            return
+        }
+        navigate(path)
     }
 
     return (
         <header className={"sticky top-0 z-50 w-full transition-shadow " + (scrolled ? "bg-white/90 backdrop-blur shadow-sm" : "bg-white/90 backdrop-blur")}>
             <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
 
-                <div className="flex items-center gap-2 cursor-pointer" onClick={() => goTo("home")}>
+                <div className="flex items-center gap-2 cursor-pointer" onClick={() => goTo("/about#home")}>
                     <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-teal-700 text-white">
                         <Cloud size={18} />
                     </span>
@@ -48,7 +61,7 @@ function NavBar({ page, setPage }: NavBarProps) {
                     {links.map((link) => (
                         <div
                             key={link.id}
-                            onClick={() => goTo(link.id)}
+                            onClick={() => goTo(link.path)}
                             className={
                                 "cursor-pointer rounded-full px-4 py-2 text-sm font-medium transition-colors " +
                                 (page === link.id
@@ -63,10 +76,10 @@ function NavBar({ page, setPage }: NavBarProps) {
 
                 <div className="hidden md:block">
                     <button
-                        onClick={() => goTo("contact")}
+                        onClick={() => goTo("/share")}
                         className="rounded-full bg-teal-700 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-teal-800"
                     >
-                        Get in touch
+                        Share an article
                     </button>
                 </div>
 
@@ -84,7 +97,7 @@ function NavBar({ page, setPage }: NavBarProps) {
                     {links.map((link) => (
                         <div
                             key={link.id}
-                            onClick={() => goTo(link.id)}
+                            onClick={() => goTo(link.path)}
                             className={
                                 "cursor-pointer rounded-lg px-3 py-2.5 text-sm font-medium " +
                                 (page === link.id ? "bg-teal-50 text-teal-700" : "text-slate-600")
@@ -94,10 +107,10 @@ function NavBar({ page, setPage }: NavBarProps) {
                         </div>
                     ))}
                     <button
-                        onClick={() => goTo("contact")}
+                        onClick={() => goTo("/share")}
                         className="mt-2 w-full rounded-full bg-teal-700 px-5 py-2.5 text-sm font-semibold text-white"
                     >
-                        Get in touch
+                        Share an article
                     </button>
                 </div>
             )}

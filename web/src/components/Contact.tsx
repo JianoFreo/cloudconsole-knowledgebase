@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { Mail, MapPin, Phone, Send } from "lucide-react"
+import { api } from "../lib/api"
 
 function Contact() {
 
@@ -7,10 +8,21 @@ function Contact() {
     const [email, setEmail] = useState("")
     const [message, setMessage] = useState("")
     const [sent, setSent] = useState(false)
+    const [sending, setSending] = useState(false)
+    const [error, setError] = useState<string | null>(null)
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if (!name || !email || !message) return
-        setSent(true)
+        setSending(true)
+        setError(null)
+        try {
+            await api.contact.submit({ name, email, message })
+            setSent(true)
+        } catch (err) {
+            setError(err instanceof Error ? err.message : "Something went wrong sending your message")
+        } finally {
+            setSending(false)
+        }
     }
 
     return (
@@ -34,19 +46,19 @@ function Contact() {
                                 <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-teal-50 text-teal-700">
                                     <Mail size={16} />
                                 </span>
-                                <span className="text-sm">support@cloudconsole.example</span>
+                                <span className="text-sm">ccadmin@cloudconsole.ph</span>
                             </div>
                             <div className="flex items-center gap-3 text-slate-700">
                                 <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-teal-50 text-teal-700">
                                     <Phone size={16} />
                                 </span>
-                                <span className="text-sm">+1 (555) 010-2029</span>
+                                <span className="text-sm">+63 2 8231 2520</span>
                             </div>
                             <div className="flex items-center gap-3 text-slate-700">
                                 <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-teal-50 text-teal-700">
                                     <MapPin size={16} />
                                 </span>
-                                <span className="text-sm">Remote-first, HQ in Manila, PH</span>
+                                <span className="text-sm">25D Zeta Bldg, Salcedo St, Makati City, PH</span>
                             </div>
                         </div>
                     </div>
@@ -90,11 +102,13 @@ function Contact() {
                                         className="w-full resize-none rounded-lg border border-slate-200 px-4 py-2.5 text-sm outline-none focus:border-teal-600"
                                     />
                                 </div>
+                                {error && <p className="text-sm text-rose-600">{error}</p>}
                                 <button
                                     onClick={handleSubmit}
-                                    className="mt-2 flex items-center justify-center gap-2 rounded-full bg-teal-700 px-5 py-3 text-sm font-semibold text-white hover:bg-teal-800"
+                                    disabled={sending}
+                                    className="mt-2 flex items-center justify-center gap-2 rounded-full bg-teal-700 px-5 py-3 text-sm font-semibold text-white hover:bg-teal-800 disabled:opacity-60"
                                 >
-                                    Send message
+                                    {sending ? "Sending..." : "Send message"}
                                     <Send size={15} />
                                 </button>
                             </div>

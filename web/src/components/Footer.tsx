@@ -1,4 +1,5 @@
 import { Cloud } from "lucide-react"
+import { Link } from "react-router"
 
 function Footer() {
     return (
@@ -12,11 +13,9 @@ function Footer() {
                 </div>
 
                 <div className="flex gap-6 text-sm text-slate-500">
-                    <span className="cursor-pointer hover:text-slate-800">Marketing</span>
-                    <span className="cursor-pointer hover:text-slate-800">Presales</span>
-                    <span className="cursor-pointer hover:text-slate-800">HR</span>
-                    <span className="cursor-pointer hover:text-slate-800">Logistics</span>
-                    <span className="cursor-pointer hover:text-slate-800">Finance</span>
+                    <Link to="/browse" className="hover:text-slate-800">Browse</Link>
+                    <Link to="/share" className="hover:text-slate-800">Share</Link>
+                    <Link to="/about#contact" className="hover:text-slate-800">Contact</Link>
                 </div>
 
                 <p className="text-xs text-slate-400">© 2026 CloudConsole. All rights reserved.</p>

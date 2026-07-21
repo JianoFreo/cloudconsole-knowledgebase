@@ -1,9 +1,32 @@
 import { ArrowRight, Search } from "lucide-react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { useNavigate } from "react-router"
+import { api } from "../lib/api"
 
 function Hero() {
 
+    const navigate = useNavigate()
     const [query, setQuery] = useState("")
+    const [stats, setStats] = useState({ departments: 0, articles: 0 })
+
+    useEffect(() => {
+        let cancelled = false
+        Promise.all([api.departments.list(), api.articles.list({ page: 1 })])
+            .then(([departments, articles]) => {
+                if (cancelled) return
+                setStats({ departments: departments.length, articles: articles.pagination.total })
+            })
+            .catch(() => {
+                // Stats are non-critical - fail silently and keep zeros.
+            })
+        return () => {
+            cancelled = true
+        }
+    }, [])
+
+    const handleSearch = () => {
+        navigate(`/browse${query.trim() ? `?search=${encodeURIComponent(query.trim())}` : ""}`)
+    }
 
     return (
         <section id="home" className="relative overflow-hidden bg-teal-800">
@@ -18,8 +41,8 @@ function Hero() {
                     CloudConsole Knowledgebase
                 </h1>
                 <p className="mt-5 max-w-xl text-lg text-teal-100">
-                    Guides, playbooks, and answers from Marketing, Finance, Logistics,
-                    Presales, and Human Resources — all searchable, all in one place.
+                    Guides, playbooks, and answers shared by every team — searchable,
+                    always growing, and open for anyone to contribute to.
                 </p>
 
                 <div className="mt-8 flex max-w-lg items-center gap-2 rounded-full bg-white p-1.5 pl-5 shadow-lg">
@@ -27,18 +50,22 @@ function Hero() {
                     <input
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
+                        onKeyDown={(e) => e.key === "Enter" && handleSearch()}
                         placeholder="Search articles, guides, forms..."
                         className="w-full bg-transparent py-2 text-sm text-slate-800 outline-none placeholder:text-slate-400"
                     />
-                    <button className="flex shrink-0 items-center gap-1.5 rounded-full bg-teal-700 px-5 py-2.5 text-sm font-semibold text-white hover:bg-teal-800">
+                    <button
+                        onClick={handleSearch}
+                        className="flex shrink-0 items-center gap-1.5 rounded-full bg-teal-700 px-5 py-2.5 text-sm font-semibold text-white hover:bg-teal-800"
+                    >
                         Search
                         <ArrowRight size={15} />
                     </button>
                 </div>
 
                 <div className="mt-10 flex flex-wrap gap-x-8 gap-y-3 text-sm text-teal-100">
-                    <div><span className="font-bold text-white">5</span> departments</div>
-                    <div><span className="font-bold text-white">200+</span> articles</div>
+                    <div><span className="font-bold text-white">{stats.departments}</span> departments</div>
+                    <div><span className="font-bold text-white">{stats.articles}</span> articles</div>
                     <div><span className="font-bold text-white">24/7</span> self-service access</div>
                 </div>
             </div>
