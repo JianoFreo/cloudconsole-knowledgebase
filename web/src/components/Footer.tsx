@@ -1,4 +1,3 @@
-import { Cloud } from "lucide-react"
 import { Link } from "react-router"
 
 function Footer() {
@@ -6,9 +5,7 @@ function Footer() {
         <footer className="bg-white border-t border-slate-100 py-10">
             <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-6 md:flex-row">
                 <div className="flex items-center gap-2">
-                    <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-teal-700 text-white">
-                        <Cloud size={16} />
-                    </span>
+                    <img src="image.png" alt="CloudConsole Logo" className="h-8 w-8" />
                     <span className="text-sm font-semibold text-slate-700">CloudConsole Knowledgebase</span>
                 </div>
 
