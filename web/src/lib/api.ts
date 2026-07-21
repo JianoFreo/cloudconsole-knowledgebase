@@ -1,5 +1,5 @@
 export const API_BASE_URL: string =
-  (import.meta.env.VITE_API_BASE_URL as string | undefined) || "http://localhost:5000" || "https://cc-knowledgebase-backend.onrender.com";
+  (import.meta.env.VITE_API_BASE_URL as string | undefined) || "http://localhost:5000" ;
 
 export type Department = {
   id: string;
