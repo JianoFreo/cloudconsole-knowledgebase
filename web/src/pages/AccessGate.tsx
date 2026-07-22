@@ -1,5 +1,6 @@
-import { useEffect, useState, type ReactNode } from "react"
-import { Cloud, Lock } from "lucide-react"
+import { Lock } from "lucide-react"
+import { type ReactNode, useEffect, useState } from "react";
+
 import { api } from "../lib/api"
 
 const STORAGE_KEY = "kb_access_granted"
@@ -47,8 +48,12 @@ function AccessGate({ children }: { children: ReactNode }) {
         <div className="flex min-h-screen items-center justify-center bg-teal-800 px-6">
             <div className="w-full max-w-sm rounded-2xl bg-white p-8 shadow-xl">
                 <div className="flex flex-col items-center text-center">
-                    <span className="flex h-12 w-12 items-center justify-center rounded-full bg-teal-50 text-teal-700">
-                        <Cloud size={22} />
+                    <span className="flex items-center justify-center rounded-full bg-teal-50 text-teal-700">
+                        <img
+                            src="CloudConsole_Logo.webp"
+                            alt="CloudConsole Logo"
+                            className="max-w-full h-auto"
+                        />
                     </span>
                     <h1 className="mt-4 text-lg font-bold text-slate-900">CloudConsole Knowledgebase</h1>
                     <p className="mt-1 text-sm text-slate-500">Enter the access code to continue.</p>
