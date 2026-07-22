@@ -46,19 +46,19 @@ function Contact() {
                                 <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-teal-50 text-teal-700">
                                     <Mail size={16} />
                                 </span>
-                                <span className="text-sm">ccadmin@cloudconsole.ph</span>
+                                <span className="text-sm">dikoalamkaninongemailalagay.gmail.com</span>
                             </div>
                             <div className="flex items-center gap-3 text-slate-700">
                                 <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-teal-50 text-teal-700">
                                     <Phone size={16} />
                                 </span>
-                                <span className="text-sm">+63 2 8231 2520</span>
+                                <span className="text-sm">09123456789</span>
                             </div>
                             <div className="flex items-center gap-3 text-slate-700">
                                 <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-teal-50 text-teal-700">
                                     <MapPin size={16} />
                                 </span>
-                                <span className="text-sm">25D Zeta Bldg, Salcedo St, Makati City, PH</span>
+                                <span className="text-sm">address goes here</span>
                             </div>
                         </div>
                     </div>
