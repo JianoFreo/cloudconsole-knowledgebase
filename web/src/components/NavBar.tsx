@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { Cloud, Menu, X } from "lucide-react"
+import { Menu, X } from "lucide-react"
 import { useLocation, useNavigate } from "react-router"
 
 type NavBarProps = {

@@ -101,4 +101,8 @@ export const api = {
     submit: (data: { name: string; email: string; message: string }) =>
       request<{ ok: true; id: string }>("/api/contact", { method: "POST", body: JSON.stringify(data) }),
   },
+  access: {
+    verify: (code: string) =>
+      request<{ valid: boolean }>("/api/access/verify", { method: "POST", body: JSON.stringify({ code }) }),
+  },
 };
