@@ -5,7 +5,7 @@ function Footer() {
         <footer className="bg-white border-t border-slate-100 py-10">
             <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-6 md:flex-row">
                 <div className="flex items-center gap-2">
-                    <img src="image.png" alt="CloudConsole Logo" className="h-8 w-8" />
+                    <img src="/image.png" alt="CloudConsole Logo" className="h-8 w-8" />
                     <span className="text-sm font-semibold text-slate-700">CloudConsole Knowledgebase</span>
                 </div>
 

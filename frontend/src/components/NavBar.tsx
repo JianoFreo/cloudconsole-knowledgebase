@@ -49,7 +49,7 @@ function NavBar({ page }: NavBarProps) {
             <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
 
                 <div className="flex items-center gap-2 cursor-pointer" onClick={() => goTo("/about#home")}>
-                    <img src="image.png" alt="CloudConsole Logo" className="h-8 w-8" />
+                    <img src="/image.png" alt="CloudConsole Logo" className="h-8 w-8" />
                     <span className="text-[15px] font-bold tracking-tight text-slate-900">
                         CloudConsole <span className="font-medium text-slate-500">Knowledgebase</span>
                     </span>
