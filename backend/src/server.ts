@@ -13,6 +13,7 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 
+app.set("trust proxy", true);
 const allowedOrigins = ENV.CLIENT_ORIGIN.split(",").map((o) => o.trim());
 app.use(cors({ origin: allowedOrigins.includes("*") ? true : allowedOrigins }));
 

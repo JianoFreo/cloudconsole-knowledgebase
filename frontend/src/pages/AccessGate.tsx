@@ -56,9 +56,7 @@ function AccessGate({ children }: { children: ReactNode }) {
     }
     useEffect(() => {
         if (sessionStorage.getItem("ipLogged")) return;
-
         sessionStorage.setItem("ipLogged", "true");
-
         api.user_logs.logIp()
     }, []);
 
