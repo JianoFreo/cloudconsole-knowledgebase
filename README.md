@@ -17,14 +17,3 @@ The system streamlines knowledge sharing by allowing administrators to manage do
 | Responsive Interface    | Access the platform seamlessly from desktop, tablet, and mobile devices.                    |
 | Security                | There is a guest code that anybody outside clouconsole. However, I would get automatically notified through email to keep track of external access.                |
 
-## Technologies Used
-
-| Category        | Technologies                                               |
-| --------------- | ---------------------------------------------------------- |
-| Frontend        | React, TypeScript, Vite, Tailwind CSS, React Router, Axios |
-| Backend         | Node.js, Express.js, TypeScript                            |
-| Database        | PostgreSQL, Prisma ORM                                     |
-| Authentication  | JSON Web Tokens (JWT)                                      |
-| File Storage    | Cloudinary                                                 |
-| Deployment      | Render                                                     |
-| Version Control | Git, GitHub                                                |
