@@ -18,18 +18,20 @@ export async function verifyAccessCode(req: Request, res: Response) {
       return res.status(400).json({ valid: false, error: "'code' is required" });
     }
 
-    const result = await sql`
-        SELECT code 
-        FROM access_codes 
-        ORDER BY updated_at 
-        DESC LIMIT 1`;
-    const record = result[0];
+    const trimmedCode = String(code).trim();
 
-    if (!record) {
+    const total = await sql`SELECT COUNT(*)::int AS count FROM access_codes`;
+    if (!total[0] || total[0].count === 0) {
       return res.status(503).json({ valid: false, error: "No access code has been set up yet" });
     }
 
-    const valid = String(code).trim() === record.code;
+    const result = await sql`
+        SELECT code
+        FROM access_codes
+        WHERE code = ${trimmedCode}
+        LIMIT 1`;
+
+    const valid = result.length > 0;
     res.status(200).json({ valid });
   } catch (error) {
     console.error(error);
