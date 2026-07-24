@@ -1,5 +1,5 @@
 import { Lock } from "lucide-react"
-import { type ReactNode, use, useEffect, useState } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 
 import { api } from "../lib/api"
 
