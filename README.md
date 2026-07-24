@@ -15,5 +15,5 @@ The system streamlines knowledge sharing by allowing administrators to manage do
 | User Authentication     | Secure login system with role-based access to administrative features.                      |
 | Article Images          | Upload and display images to improve documentation and visual guides.                       |
 | Responsive Interface    | Access the platform seamlessly from desktop, tablet, and mobile devices.                    |
-| Security                | There is a guest code that anybody outside clouconsole. However, I would get automatically notified through email to keep track of external access.                |
+| Security                | There is a guest code that anybody outside clouconsole can use. However, I would get automatically notified through email to keep track of external access.                |
 
