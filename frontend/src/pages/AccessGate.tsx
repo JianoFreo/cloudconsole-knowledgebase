@@ -1,5 +1,5 @@
 import { Lock } from "lucide-react"
-import { type ReactNode, useEffect, useState } from "react";
+import { type ReactNode, use, useEffect, useState } from "react";
 
 import { api } from "../lib/api"
 
@@ -54,6 +54,17 @@ function AccessGate({ children }: { children: ReactNode }) {
             setSubmitting(false)
         }
     }
+    useEffect(() => {
+    const logIp = async () => {
+        try {
+            await api.user_logs.logIp();
+        } catch (error) {
+            console.error("Failed to log IP address:", error);
+        }
+    };
+
+    logIp();
+}, []);
 
     // Avoid a flash of the passcode screen while we check sessionStorage.
     if (!checkedStorage) return null

@@ -2,7 +2,8 @@
 // origin, so API calls can just hit relative paths ("" base). Set
 // VITE_API_BASE_URL only for local dev when running the frontend and
 // backend as separate servers.
-export const API_BASE_URL: string = (import.meta.env.VITE_API_BASE_URL as string | undefined) || "";
+export const API_BASE_URL: string =
+  (import.meta.env.VITE_API_BASE_URL as string | undefined) || "";
 
 export type Department = {
   id: string;
@@ -48,7 +49,19 @@ export type Resource = {
 
 export type Paginated<T> = {
   items: T[];
-  pagination: { page: number; pageSize: number; total: number; totalPages: number };
+  pagination: {
+    page: number;
+    pageSize: number;
+    total: number;
+    totalPages: number;
+  };
+};
+export type User_Log = {
+  id: string;
+  ip_address: string;
+  user_agent: string;
+  referer: string | null;
+  language: string;
 };
 
 // ---------------------------------------------------------------------
@@ -58,6 +71,15 @@ export type Paginated<T> = {
 // so nothing above this file has to change.
 // ---------------------------------------------------------------------
 
+function mapUserLog(row: any): User_Log {
+  return {
+    id: String(row.id),
+    ip_address: row.ip_address,
+    user_agent: row.user_agent,
+    referer: row.referer ?? null,
+    language: row.language ?? "",
+  };
+}
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function mapDepartment(row: any): Department {
   return {
@@ -101,7 +123,9 @@ function mapArticle(row: any): Article {
       color: row.department_color ?? "teal",
       createdAt: "",
     },
-    attachments: Array.isArray(row.attachments) ? row.attachments.map(mapAttachment) : [],
+    attachments: Array.isArray(row.attachments)
+      ? row.attachments.map(mapAttachment)
+      : [],
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };
@@ -157,11 +181,15 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
 export const api = {
   departments: {
     list: async (): Promise<Department[]> => {
-      const data = await request<{ departments: unknown[] }>("/api/departments");
+      const data = await request<{ departments: unknown[] }>(
+        "/api/departments",
+      );
       return data.departments.map(mapDepartment);
     },
     get: async (slug: string): Promise<Department> => {
-      const data = await request<{ department: unknown }>(`/api/departments/${slug}`);
+      const data = await request<{ department: unknown }>(
+        `/api/departments/${slug}`,
+      );
       return mapDepartment(data.department);
     },
     create: async (payload: {
@@ -177,15 +205,30 @@ export const api = {
       return mapDepartment(data.department);
     },
   },
+  user_logs: {
+    list: async (): Promise<User_Log[]> => {
+      const data = await request<{ user_logs: unknown[] }>("/api/access/logs");
+      return data.user_logs.map(mapUserLog);
+    },
+
+    logIp: async (): Promise<{ success: boolean }> => {
+      return request<{ success: boolean }>("/api/access/log-ip", {
+        method: "POST",
+      });
+    },
+  },
   articles: {
-    list: async (params: { search?: string; department?: string; page?: number } = {}): Promise<Paginated<Article>> => {
+    list: async (
+      params: { search?: string; department?: string; page?: number } = {},
+    ): Promise<Paginated<Article>> => {
       const qs = new URLSearchParams();
       if (params.search) qs.set("search", params.search);
       if (params.department) qs.set("department", params.department);
       if (params.page) qs.set("page", String(params.page));
-      const data = await request<{ items: unknown[]; pagination: Paginated<Article>["pagination"] }>(
-        `/api/articles?${qs.toString()}`
-      );
+      const data = await request<{
+        items: unknown[];
+        pagination: Paginated<Article>["pagination"];
+      }>(`/api/articles?${qs.toString()}`);
       return { items: data.items.map(mapArticle), pagination: data.pagination };
     },
     get: async (id: string): Promise<Article> => {
@@ -193,14 +236,17 @@ export const api = {
       return mapArticle(data.article);
     },
     create: async (formData: FormData): Promise<Article> => {
-      const data = await request<{ article: unknown }>("/api/articles", { method: "POST", body: formData });
+      const data = await request<{ article: unknown }>("/api/articles", {
+        method: "POST",
+        body: formData,
+      });
       return mapArticle(data.article);
     },
   },
   resources: {
     list: async (department?: string): Promise<Resource[]> => {
       const data = await request<{ resources: unknown[] }>(
-        `/api/resources${department ? `?department=${department}` : ""}`
+        `/api/resources${department ? `?department=${department}` : ""}`,
       );
       return data.resources.map(mapResource);
     },
@@ -219,10 +265,16 @@ export const api = {
   },
   contact: {
     submit: (data: { name: string; email: string; message: string }) =>
-      request<{ ok: true; message: unknown }>("/api/contact", { method: "POST", body: JSON.stringify(data) }),
+      request<{ ok: true; message: unknown }>("/api/contact", {
+        method: "POST",
+        body: JSON.stringify(data),
+      }),
   },
   access: {
     verify: (code: string) =>
-      request<{ valid: boolean }>("/api/access/verify", { method: "POST", body: JSON.stringify({ code }) }),
+      request<{ valid: boolean }>("/api/access/verify", {
+        method: "POST",
+        body: JSON.stringify({ code }),
+      }),
   },
 };
