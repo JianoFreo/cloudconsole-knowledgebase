@@ -16,6 +16,7 @@
   "type": "module",
   "dependencies": {
     "@neondatabase/serverless": "^1.1.0",
+    "axios": "^1.18.1",
     "cloudinary": "^2.5.1",
     "cors": "^2.8.5",
     "dotenv": "^17.4.2",
