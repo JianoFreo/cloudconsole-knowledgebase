@@ -19,15 +19,6 @@ app.use(cors({ origin: allowedOrigins.includes("*") ? true : allowedOrigins }));
 app.use(express.json({ limit: "5mb" }));
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan(ENV.NODE_ENV === "production" ? "combined" : "dev"));
-app.get("/", (req, res) => {
-    console.log({
-        ip: req.ip,
-        userAgent: req.get("user-agent"),
-        referer: req.get("referer"),
-        language: req.get("accept-language"),
-        time: new Date().toISOString(),
-    });
-});
 app.get("/health", (_req, res) => res.json({ status: "ok" }));
 
 // API routes

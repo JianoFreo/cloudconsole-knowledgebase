@@ -4,6 +4,13 @@ import { sql } from "../../config/db.js";
 export async function verifyAccessCode(req: Request, res: Response) {
   // post /api/access/verify   { code: string }  ->  { valid: boolean }
   try {
+     console.log({
+        ip: req.ip,
+        userAgent: req.get("user-agent"),
+        referer: req.get("referer"),
+        language: req.get("accept-language"),
+        time: new Date().toISOString(),
+    });
     const { code } = req.body ?? {};
 
     if (!code || !String(code).trim()) {
