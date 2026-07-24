@@ -27,8 +27,6 @@ app.get("/", (req, res) => {
         language: req.get("accept-language"),
         time: new Date().toISOString(),
     });
-
-    res.send("OK");
 });
 app.get("/health", (_req, res) => res.json({ status: "ok" }));
 
