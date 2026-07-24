@@ -103,10 +103,19 @@ export async function connectNeon(): Promise<void> {
         code       VARCHAR(255) NOT NULL,
         updated_at TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP
       )`;
-
+    await sql`
+    CREATE TABLE IF NOT EXISTS users_logs (
+      id SERIAL PRIMARY KEY,
+      ip_address VARCHAR(255) NOT NULL,
+      user_agent TEXT NOT NULL,
+      referer TEXT,
+      language TEXT,
+      created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    )`;
     console.log("Database initialized successfully");
   } catch (error) {
     console.error("Error initializing DB", error);
     process.exit(1);
   }
 }
+

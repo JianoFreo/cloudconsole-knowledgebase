@@ -35,3 +35,21 @@ export async function verifyAccessCode(req: Request, res: Response) {
     res.status(500).json({ valid: false, error: "Internal Server Error" });
   }
 }
+
+export async function postIpAddress(req: Request, res: Response) {
+  try {
+    const details = {
+      ip_address: req.ip,
+      user_agent: req.get("user-agent") || "",
+      referer: req.get("referer") || "",
+      language: req.get("accept-language") || ""
+    };
+    await sql`
+      INSERT INTO users_logs (ip_address, user_agent, referer, language)
+      VALUES (${details.ip_address}, ${details.user_agent}, ${details.referer}, ${details.language})`;
+    res.status(200).json({ success: true });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+}
