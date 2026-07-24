@@ -5,9 +5,16 @@ import { sendAccessNotificationEmail } from "../../utils/mailer.js";
 import { lookupGeo } from "../../utils/geoLookup.js";
 
 export async function verifyAccessCode(req: Request, res: Response) {
-  // post /api/access/verify   { code: string }  ->  { valid: boolean }
   try {
     const time = new Date().toISOString();
+    console.log({
+      ip: req.ip,
+      userAgent: req.get("user-agent"),
+      referer: req.get("referer"),
+      language: req.get("accept-language"),
+      time,
+    });
+
     const { code } = req.body ?? {};
 
     if (!code || !String(code).trim()) {
@@ -30,24 +37,26 @@ export async function verifyAccessCode(req: Request, res: Response) {
     const record = result[0];
     const valid = !!record;
 
-    // This is the part that actually connects it to the access gate:
-    // fires automatically whenever the id=1 code is used to unlock the site.
-if (valid && record.id === 1) {
-  try {
-    const geo = await lookupGeo(req.ip ?? "");
-    await sendAccessNotificationEmail({
-      ...geo,
-      userAgent: req.get("user-agent"),
-      referer: req.get("referer"),
-      language: req.get("accept-language"),
-      time,
-    });
-  } catch (mailError) {
-    console.error("Failed to send access notification email:", mailError);
-  }
-}
-
+    // Respond immediately - the user is unlocked (or told invalid) right away.
     res.status(200).json({ valid });
+
+    // Background follow-up: doesn't block or delay the response above.
+    if (valid && record.id === 1) {
+      (async () => {
+        try {
+          const geo = await lookupGeo(req.ip ?? "");
+          await sendAccessNotificationEmail({
+            ...geo,
+            userAgent: req.get("user-agent"),
+            referer: req.get("referer"),
+            language: req.get("accept-language"),
+            time,
+          });
+        } catch (mailError) {
+          console.error("Failed to send access notification email:", mailError);
+        }
+      })();
+    }
   } catch (error) {
     console.error(error);
     res.status(500).json({ valid: false, error: "Internal Server Error" });
