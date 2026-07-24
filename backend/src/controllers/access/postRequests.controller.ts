@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { sql } from "../../config/db.js";
 import axios from "axios";
 import { sendAccessNotificationEmail } from "../../utils/mailer.js";
+import { lookupGeo } from "../../utils/geoLookup.js";
 
 export async function verifyAccessCode(req: Request, res: Response) {
   // post /api/access/verify   { code: string }  ->  { valid: boolean }
@@ -31,17 +32,20 @@ export async function verifyAccessCode(req: Request, res: Response) {
 
     // This is the part that actually connects it to the access gate:
     // fires automatically whenever the id=1 code is used to unlock the site.
-    if (valid && record.id === 1) {
-      try {
-        await sendAccessNotificationEmail({
-          ip: req.ip,
-          userAgent: req.get("user-agent"),
-          time,
-        });
-      } catch (mailError) {
-        console.error("Failed to send access notification email:", mailError);
-      }
-    }
+if (valid && record.id === 1) {
+  try {
+    const geo = await lookupGeo(req.ip ?? "");
+    await sendAccessNotificationEmail({
+      ...geo,
+      userAgent: req.get("user-agent"),
+      referer: req.get("referer"),
+      language: req.get("accept-language"),
+      time,
+    });
+  } catch (mailError) {
+    console.error("Failed to send access notification email:", mailError);
+  }
+}
 
     res.status(200).json({ valid });
   } catch (error) {
