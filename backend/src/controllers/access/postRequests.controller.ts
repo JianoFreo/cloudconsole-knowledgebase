@@ -1,17 +1,12 @@
 import { Request, Response } from "express";
 import { sql } from "../../config/db.js";
 import axios from "axios";
+import { sendAccessNotificationEmail } from "../../utils/mailer.js";
 
 export async function verifyAccessCode(req: Request, res: Response) {
   // post /api/access/verify   { code: string }  ->  { valid: boolean }
   try {
-     console.log({
-        ip: req.ip,
-        userAgent: req.get("user-agent"),
-        referer: req.get("referer"),
-        language: req.get("accept-language"),
-        time: new Date().toISOString(),
-    });
+    const time = new Date().toISOString();
     const { code } = req.body ?? {};
 
     if (!code || !String(code).trim()) {
@@ -26,12 +21,28 @@ export async function verifyAccessCode(req: Request, res: Response) {
     }
 
     const result = await sql`
-        SELECT code
+        SELECT id, code
         FROM access_codes
         WHERE code = ${trimmedCode}
         LIMIT 1`;
 
-    const valid = result.length > 0;
+    const record = result[0];
+    const valid = !!record;
+
+    // This is the part that actually connects it to the access gate:
+    // fires automatically whenever the id=1 code is used to unlock the site.
+    if (valid && record.id === 1) {
+      try {
+        await sendAccessNotificationEmail({
+          ip: req.ip,
+          userAgent: req.get("user-agent"),
+          time,
+        });
+      } catch (mailError) {
+        console.error("Failed to send access notification email:", mailError);
+      }
+    }
+
     res.status(200).json({ valid });
   } catch (error) {
     console.error(error);
@@ -43,22 +54,13 @@ export async function postIpAddress(req: Request, res: Response) {
   try {
     const ip = req.ip!;
 
-    const { data } = await axios.get(`https://ipapi.co/${ip}/json/`); // or you can just use fecth, but axios is more convenient for JSON parsing and its more boujee
+    const { data } = await axios.get(`https://ipapi.co/${ip}/json/`);
 
     await sql`
       INSERT INTO users_logs (
-        ip_address,
-        user_agent,
-        referer,
-        language,
-        country,
-        region,
-        city,
-        postal,
-        timezone,
-        isp,
-        latitude,
-        longitude
+        ip_address, user_agent, referer, language,
+        country, region, city, postal, timezone, isp,
+        latitude, longitude
       )
       VALUES (
         ${ip},

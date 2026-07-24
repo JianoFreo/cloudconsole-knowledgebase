@@ -39,3 +39,4 @@ connectNeon().then(() => {
     console.log(`Server is up and running on http://localhost:${ENV.PORT}`);
   });
 });
+
