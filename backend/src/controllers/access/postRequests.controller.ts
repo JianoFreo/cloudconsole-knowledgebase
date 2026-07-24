@@ -57,8 +57,7 @@ if (valid && record.id === 1) {
 export async function postIpAddress(req: Request, res: Response) {
   try {
     const ip = req.ip!;
-
-    const { data } = await axios.get(`https://ipapi.co/${ip}/json/`);
+    const geo = await lookupGeo(ip);
 
     await sql`
       INSERT INTO users_logs (
@@ -67,24 +66,24 @@ export async function postIpAddress(req: Request, res: Response) {
         latitude, longitude
       )
       VALUES (
-        ${ip},
+        ${geo.ip},
         ${req.get("user-agent") ?? ""},
         ${req.get("referer") ?? ""},
         ${req.get("accept-language") ?? ""},
-        ${data.country_name ?? ""},
-        ${data.region ?? ""},
-        ${data.city ?? ""},
-        ${data.postal ?? ""},
-        ${data.timezone ?? ""},
-        ${data.org ?? ""},
-        ${data.latitude ?? null},
-        ${data.longitude ?? null}
+        ${geo.country},
+        ${geo.region},
+        ${geo.city},
+        ${geo.postal},
+        ${geo.timezone},
+        ${geo.isp},
+        ${geo.latitude},
+        ${geo.longitude}
       )
     `;
 
     res.json({ success: true });
   } catch (error) {
-    console.error(error);
+    console.error("Failed to log IP:", error instanceof Error ? error.message : error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 }
