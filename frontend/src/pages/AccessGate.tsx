@@ -55,16 +55,12 @@ function AccessGate({ children }: { children: ReactNode }) {
         }
     }
     useEffect(() => {
-    const logIp = async () => {
-        try {
-            await api.user_logs.logIp();
-        } catch (error) {
-            console.error("Failed to log IP address:", error);
-        }
-    };
+        if (sessionStorage.getItem("ipLogged")) return;
 
-    logIp();
-}, []);
+        sessionStorage.setItem("ipLogged", "true");
+
+        api.user_logs.logIp()
+    }, []);
 
     // Avoid a flash of the passcode screen while we check sessionStorage.
     if (!checkedStorage) return null
