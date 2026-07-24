@@ -10,7 +10,11 @@ export async function verifyAccessCode(req: Request, res: Response) {
       return res.status(400).json({ valid: false, error: "'code' is required" });
     }
 
-    const result = await sql`SELECT code FROM access_codes ORDER BY updated_at DESC LIMIT 1`;
+    const result = await sql`
+        SELECT code 
+        FROM access_codes 
+        ORDER BY updated_at 
+        DESC LIMIT 1`;
     const record = result[0];
 
     if (!record) {
