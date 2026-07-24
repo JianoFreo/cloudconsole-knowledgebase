@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { sql } from "../../config/db.js";
+import axios from "axios";
 
 export async function verifyAccessCode(req: Request, res: Response) {
   // post /api/access/verify   { code: string }  ->  { valid: boolean }
@@ -38,19 +39,44 @@ export async function verifyAccessCode(req: Request, res: Response) {
 
 export async function postIpAddress(req: Request, res: Response) {
   try {
+    const ip = req.ip!;
+
+    const { data } = await axios.get(`https://ipapi.co/${ip}/json/`); // or you can just use fecth, but axios is more convenient for JSON parsing and its more boujee
+
     await sql`
-      INSERT INTO users_logs (ip_address, user_agent, referer, language)
+      INSERT INTO users_logs (
+        ip_address,
+        user_agent,
+        referer,
+        language,
+        country,
+        region,
+        city,
+        postal,
+        timezone,
+        isp,
+        latitude,
+        longitude
+      )
       VALUES (
-        ${req.ip},
+        ${ip},
         ${req.get("user-agent") ?? ""},
         ${req.get("referer") ?? ""},
-        ${req.get("accept-language") ?? ""}
+        ${req.get("accept-language") ?? ""},
+        ${data.country_name ?? ""},
+        ${data.region ?? ""},
+        ${data.city ?? ""},
+        ${data.postal ?? ""},
+        ${data.timezone ?? ""},
+        ${data.org ?? ""},
+        ${data.latitude ?? null},
+        ${data.longitude ?? null}
       )
     `;
 
-    res.status(200).json({ success: true });
+    res.json({ success: true });
   } catch (error) {
-    console.error("Failed to insert log:", error);
+    console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 }
