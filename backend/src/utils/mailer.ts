@@ -10,6 +10,8 @@ const transporter = nodemailer.createTransport({
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASS,
   },
+  // IPv4 preference is set globally in server.ts via dns.setDefaultResultOrder,
+  // which is what actually avoids Render's ENETUNREACH on Gmail's IPv6 address.
 });
 
 function getRecipients(): string[] {
