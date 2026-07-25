@@ -1,3 +1,4 @@
+import dns from "dns";
 import express from "express";
 import cors from "cors";
 import morgan from "morgan";
@@ -6,6 +7,12 @@ import { fileURLToPath } from "url";
 import { connectNeon } from "./config/db.js";
 import { ENV } from "./config/env.js";
 import apiRoutes from "./routes/index.route.js";
+
+// Render's outbound network can resolve IPv6 addresses (e.g. for Gmail's
+// SMTP servers) but sometimes fails to route to them (ENETUNREACH), even
+// though IPv4 works fine. Prefer IPv4 results globally for any outgoing
+// connection this server makes (SMTP, axios/ipapi.co, etc.).
+dns.setDefaultResultOrder("ipv4first");
 
 // FIX __dirname for ES Modules
 const __filename = fileURLToPath(import.meta.url);
@@ -39,4 +46,3 @@ connectNeon().then(() => {
     console.log(`Server is up and running on http://localhost:${ENV.PORT}`);
   });
 });
-
