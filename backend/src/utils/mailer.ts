@@ -1,18 +1,8 @@
 // backend/src/utils/mailer.ts
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
 import type { GeoInfo } from "./geoLookup.js";
 
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: Number(process.env.SMTP_PORT ?? 587),
-  secure: false,
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-  // IPv4 preference is set globally in server.ts via dns.setDefaultResultOrder,
-  // which is what actually avoids Render's ENETUNREACH on Gmail's IPv6 address.
-});
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 function getRecipients(): string[] {
   return (process.env.ACCESS_NOTIFY_EMAIL ?? "")
@@ -78,8 +68,8 @@ export async function sendAccessNotificationEmail(details: AccessEmailDetails) {
     return;
   }
 
-  await transporter.sendMail({
-    from: process.env.SMTP_FROM ?? process.env.SMTP_USER,
+  const { data, error } = await resend.emails.send({
+    from: process.env.RESEND_FROM ?? "onboarding@resend.dev",
     to: recipients,
     subject: "Access code (id 1) was used",
     text: `Access code (id 1) used.
@@ -91,4 +81,13 @@ ISP: ${details.isp}
 Time: ${details.time}`,
     html: buildAccessEmailHtml(details),
   });
+
+  if (error) {
+    // Throw so the caller's existing try/catch logs it as a failure.
+    throw new Error(`Resend API error: ${error.message}`);
+  }
+
+  console.log(
+    `Access notification email sent successfully to [${recipients.join(", ")}] (id: ${data?.id})`
+  );
 }
