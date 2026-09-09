@@ -13,7 +13,7 @@ services:
     # No ports: section.
 
   app:
-    build: .
+    build: ./backend
     restart: unless-stopped
     depends_on:
       - db
