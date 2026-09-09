@@ -1,6 +1,7 @@
 import "dotenv/config";
 
 export const ENV = {
+  RENDER_BASED: process.env.RENDER_BASED === "true",
   PORT: process.env.PORT || 5000,
   NODE_ENV: process.env.NODE_ENV || "development",
 

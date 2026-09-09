@@ -1,5 +1,6 @@
 import { neon } from "@neondatabase/serverless";
-
+import  postgres  from "postgres";
+import { ENV } from "./env.js";
 import "dotenv/config";
 
 const DATABASE_URL = process.env.DATABASE_URL;
@@ -7,8 +8,13 @@ const DATABASE_URL = process.env.DATABASE_URL;
 if (!DATABASE_URL) {
   throw new Error("DATABASE_URL is not defined");
 }
+export let sql: any;
+if (ENV.RENDER_BASED) {
+  sql = neon(DATABASE_URL);
+} else {
+  sql = postgres(DATABASE_URL);
+}
 
-export const sql = neon(DATABASE_URL);
 
 export async function connectNeon(): Promise<void> {
   try {
