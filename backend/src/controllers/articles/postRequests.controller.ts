@@ -1,10 +1,11 @@
 import { Request, Response } from "express";
 import { sql } from "../../config/db.js";
-import { generateArticleId, generateAttachmentId } from "../../utils/generateId.js";
-import { uploadBufferToCloudinary } from "../../lib/uploadToCloudinary.js";
+import { generateArticleId } from "../../utils/generateId.js";
 
 export async function createArticle(req: Request, res: Response) {
-  // post /api/articles  (multipart/form-data, field name "files" for attachments)
+  // post /api/articles  (multipart/form-data; file attachments are no longer
+  // uploaded anywhere - Cloudinary support was removed, so any files sent
+  // under the "files" field are accepted by multer for parsing but discarded)
   try {
     const { title, content, departmentSlug, authorName } = req.body ?? {};
 
@@ -31,30 +32,10 @@ export async function createArticle(req: Request, res: Response) {
       RETURNING *
     `;
 
-    const files = (req.files as Express.Multer.File[] | undefined) ?? [];
-    const attachments = [];
-    for (const file of files) {
-      const uploaded = await uploadBufferToCloudinary(file.buffer, {
-        folder: `cloudconsole-knowledgebase/${departmentSlug}`,
-        filename: file.originalname,
-      });
-      const attachmentId = await generateAttachmentId();
-      const inserted = await sql`
-        INSERT INTO attachments (attachment_id, article_id, url, public_id, resource_type, original_name)
-        VALUES (
-          ${attachmentId},
-          ${articleId},
-          ${uploaded.secure_url},
-          ${uploaded.public_id},
-          ${uploaded.resource_type},
-          ${file.originalname}
-        )
-        RETURNING *
-      `;
-      attachments.push(inserted[0]);
-    }
-
-    res.status(201).json({ article: { ...result[0], attachments } });
+    // File attachments are no longer stored; any files posted alongside the
+    // article are ignored (multer still parses the multipart body so
+    // title/content/etc. come through correctly).
+    res.status(201).json({ article: { ...result[0], attachments: [] } });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
