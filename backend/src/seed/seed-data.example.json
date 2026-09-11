@@ -1,0 +1,18 @@
+{
+  "departments": [
+    {
+      "name": "IT Support",
+      "description": "IT Support guides, playbooks, and reference docs.",
+      "icon": "Wrench",
+      "color": "sky"
+    }
+  ],
+  "articles": [
+    {
+      "departmentSlug": "it-support",
+      "title": "Example Article Title",
+      "content": "Example article body. Replace this whole file's contents with real\ndata, save it as seed-data.json (git-ignored), and run scripts/seed-via-api.mjs.",
+      "authorName": "Knowledge Base Import"
+    }
+  ]
+}

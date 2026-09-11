@@ -7,7 +7,7 @@
     "dev": "tsx watch src/server.ts",
     "build": "npm install && tsc",
     "start": "node dist/server.js",
-    "seed": "tsx seed/seed.ts",
+    "seed": "node src/seed/seed-via-api.mjs",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
